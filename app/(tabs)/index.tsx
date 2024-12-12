@@ -10,10 +10,24 @@ export default function HomeScreen() {
 
   const [state, setState] = useState({});
   const [chat, setChat] = useState([]);
+  const [text, setText] = useState('');
+  const [language, setLanguage] = useState('')
+
+  const createNewLine = () => {
+  }
 
   const fetchApi = async () => {
     try {
-      const response = await fetch('http://localhost:3000/');
+      const response = await fetch('http://localhost:3000/api', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          text: text,
+          language: language
+        }),
+      });
       const data = await response.json();
 
       // Set the chat state
@@ -22,6 +36,11 @@ export default function HomeScreen() {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  const handleChange = (e:any) => {
+    console.log(e.target.value)
+    setLanguage(e.target.value)
   }
 
   return (
@@ -33,8 +52,24 @@ export default function HomeScreen() {
           style={styles.reactLogo}
         />
       }>
+      <div>
+    	<h1>Choose a language</h1>
+      <select onChange={(e) => handleChange(e)}>
+    		<option value="french">French</option>
+    		<option value="english">English</option>
+    		<option value="korean">Korean</option>
+   		</select>
+      </div>
+      <ThemedView style={styles.stepContainer}>
         <span style={styles.titleContainer}>{chat}</span>
-        <Button title="Test api" onPress={() => fetchApi()} />
+        <TextInput
+          style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+          onChangeText={setText}
+          placeholder="useless placeholder"
+          value={text}
+        />
+        <Button title="Envoyer" onPress={() => fetchApi()} />
+      </ThemedView>
     </ParallaxScrollView>
   );
 }
